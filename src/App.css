@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* styles.css */
+.custom-blue {
+  color: #0F1754;
+}
+
+.bg-custom-blue {
+  background-color: #0F1754;
+}
+
+.border-custom-blue {
+  border-color: #0F1754;
+}
