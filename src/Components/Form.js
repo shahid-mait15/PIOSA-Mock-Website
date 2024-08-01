@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { toast, ToastContainer, Slide } from "react-toastify";
 
 const Form = () => {
-  const { register, handleSubmit } = useForm();
+  const [submitted, setSubmitted] = useState(false);
   const [showDynamicFields, setShowDynamicFields] = useState(false);
   const [formData, setFormData] = useState({
-    frequency: '',
-    time: '',
-    details: '',
+    frequency: "",
+    time: "",
+    details: "",
+  });
+  const handleChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
+  const schema = yup.object().shape({
+    // email: yup.string().email("Invalid email format").required("Email is required"),
+    // password: yup.string().required("Password is required"),
   });
 
   const generateTimeOptions = () => {
@@ -26,33 +39,66 @@ const Form = () => {
     return times;
   };
 
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/Form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-  const onSubmit = (data) => {
-    console.log(data);
+      const responseBody = await response.json(); // Capture response JSON
+
+      console.log("Response Status:", response.status);
+      console.log("Response Body:", responseBody);
+
+      if (response.ok) {
+        toast.success("Sign in successful!", {
+          position: "top-center",
+          transition: Slide,
+        });
+        reset();
+        setSubmitted(true);
+      } else {
+        const errorMessage = responseBody.message || "Failed to sign in.";
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error during sign in:", error);
+      toast.error(error.message || "Failed to sign in.");
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-700 p-4">
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit)} action="/upload" method="POST" enctype="multipart/form-data"
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-6xl relative"
       >
         <h3 className="font-bold text-center text-xl">
-          Answer the questions below with respect to the application for Prolific I/O
+          Answer the questions below with respect to the application for
+          Prolific I/O
         </h3>
         <p className="text-center text-sm">
-          Please click on the 'Info' for the Information and{' '}
+          Please click on the 'Info' for the Information and{" "}
           <Link to="/contact-us" className="text-blue-500 underline">
             contact us
-          </Link>{' '}
+          </Link>{" "}
           if you would like to speak to our SME
         </p>
         <div className="flex gap-4 mt-6">
           <div className="w-1/2">
-            <h2 className="text-center text-2xl font-bold mb-6">Performance and Scaling</h2>
+            <h2 className="text-center text-2xl font-bold mb-6">
+              Performance and Scaling
+            </h2>
             <div className="border p-4 rounded shadow">
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-0 text-sm">
@@ -74,6 +120,7 @@ const Form = () => {
                 </p>
                 <input
                   type="text"
+                  id="IOPS_Threshold_for_Scaling"
                   {...register("IOPS_Threshold_for_Scaling")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 />
@@ -92,16 +139,16 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
-                </p>  
+                </p>
                 <input
                   type="text"
-                 
-                  {...register('Expected_Peak_IOPS')}
+                  id="Expected_Peak_IOPS"
+                  {...register("Expected_Peak_IOPS")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
               {/* Similar blocks for other fields */}
@@ -112,7 +159,9 @@ const Form = () => {
                   <span className="text-red-500 ml-1">*</span>
                 </label>
                 <p className="text-xs mb-2 flex">
-                  3. Do you need dynamic IOPS to be configured for specific times of the day, week, or month? If yes, please define the frequency and time.
+                  3. Do you need dynamic IOPS to be configured for specific
+                  times of the day, week, or month? If yes, please define the
+                  frequency and time.
                   <span className="text-blue-500 underline flex items-center pl-2">
                     <a
                       href="https://drive.google.com/file/d/1lpiaRzsH2k4bkcBaoNE9Toc5VKVwQY4i/view?usp=drive_link"
@@ -126,9 +175,12 @@ const Form = () => {
                 </p>
 
                 <select
-                  {...register('Dynamic_IOPS_Configuration')}
+                  {...register("Dynamic_IOPS_Configuration")}
+                  id="Dynamic_IOPS_Configuration"
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500 mb-2"
-                  onChange={(e) => setShowDynamicFields(e.target.value === 'yes')}
+                  onChange={(e) =>
+                    setShowDynamicFields(e.target.value === "yes")
+                  }
                 >
                   <option value="">Select an option</option>
                   <option value="yes">Yes</option>
@@ -143,7 +195,9 @@ const Form = () => {
                     <select
                       id="frequency"
                       value={formData.frequency}
-                      onChange={(e) => handleChange("frequency", e.target.value)}
+                      onChange={(e) =>
+                        handleChange("frequency", e.target.value)
+                      }
                       className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500 mb-2"
                     >
                       <option value="">Select Frequency</option>
@@ -201,16 +255,16 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                 
-                  {...register('Default_VPC')}
+                  id="Default_VPC"
+                  {...register("Default_VPC")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
               <div className="mb-4">
@@ -227,16 +281,16 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                
-                  {...register('Security_Group_Name')}
+                  id="Security_Group_Name"
+                  {...register("Security_Group_Name")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
               <div className="mb-4">
@@ -252,16 +306,16 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                
-                  {...register('Placement_Group_Name')}
+                  id="Placement_Group_Name"
+                  {...register("Placement_Group_Name")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
             </div>
@@ -286,20 +340,20 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                  {...register('AWS_Region')}
+                  {...register("AWS_Region")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
             </div>
           </div>
- 
+
           <div className="w-1/2">
             <h2 className="text-center text-2xl font-bold mb-6">
               CPU Performance
@@ -318,15 +372,16 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                  {...register('CPU_Threshold_for_Dynamic_IOPS')}
+                  id="CPU_Threshold_for_Dynamic_IOPS"
+                  {...register("CPU_Threshold_for_Dynamic_IOPS")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
             </div>
@@ -350,15 +405,16 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                  {...register('PIOSA_Server_Name')}
+                  id="PIOSA_Server_Name"
+                  {...register("PIOSA_Server_Name")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
               <div className="mb-4">
@@ -374,7 +430,8 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
@@ -383,14 +440,12 @@ const Form = () => {
                   placeholder="Server Public IP Address"
                   // {...register('PIOSA_Server_Login_Details')}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
                 <input
                   type="file"
+                  name="pemkey"
                   placeholder=".PEM Key"
-                 
                   className="shadow appearance-none border rounded w-full py-2 px-3 mt-4 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
               <div className="mb-4">
@@ -405,15 +460,16 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                  {...register('Accelerated_Server_Name')}
+                  id="Accelerated_Server_Name"
+                  {...register("Accelerated_Server_Name")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
             </div>
@@ -436,15 +492,16 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                  {...register('Count_of_EBS_Volumes')}
+                  id="Count_of_EBS_Volumes"
+                  {...register("Count_of_EBS_Volumes")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
               </div>
               <div className="mb-4">
@@ -460,29 +517,27 @@ const Form = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
-                    >Info
+                    >
+                      Info
                     </a>
                   </span>
                 </p>
                 <input
                   type="text"
-                  {...register('Total_EBS_Volume_Size')}
+                  id="Total_EBS_Volume_Size"
+                  {...register("Total_EBS_Volume_Size")}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                
                 />
-                
               </div>
             </div>
           </div>
-          
         </div>
         <button
-                type="submit"
-              
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-8"
-              >
-                Submit
-              </button>
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-8"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );
