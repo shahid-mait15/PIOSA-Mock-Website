@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast, ToastContainer, Slide } from "react-toastify";
+import downloadQuestionsExcel from '../assets/PIOSA-Questions.xlsx'
 
 const Form = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -39,6 +40,8 @@ const Form = () => {
     return times;
   };
 
+
+
   const {
     register,
     handleSubmit,
@@ -47,12 +50,37 @@ const Form = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
   const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append("IOPS_Threshold_for_Scaling", data.IOPS_Threshold_for_Scaling);
+    formData.append("Expected_Peak_IOPS", data.Expected_Peak_IOPS);
+    formData.append("Dynamic_IOPS_Configuration", data.Dynamic_IOPS_Configuration);
+    formData.append("frequency", data.frequency); 
+    formData.append("time", data.time); 
+    formData.append("Default_VPC", data.Default_VPC); 
+    formData.append("Security_Group_Name", data.Security_Group_Name); 
+    formData.append("Placement_Group_Name", data.Placement_Group_Name);
+    formData.append("AWS_Region", data.AWS_Region);
+    formData.append("CPU_Threshold_for_Dynamic_IOPS", data.CPU_Threshold_for_Dynamic_IOPS);
+    formData.append("PIOSA_Server_Name", data.PIOSA_Server_Name);
+    formData.append("PIOSA_Server_Login_Details", data.PIOSA_Server_Login_Details);
+    formData.append("Accelerated_Server_Name", data.Accelerated_Server_Name); 
+    formData.append("Count_of_EBS_Volumes", data.Count_of_EBS_Volumes); 
+    formData.append("Total_EBS_Volume_Size", data.Total_EBS_Volume_Size);
+    formData.append("VPC_CIDR", data.VPC_CIDR);
+
+   
+
+    // If there's a file, append it to the FormData
+    if (data.dpic && data.dpic[0]) {
+        formData.append("dpic", data.dpic[0]);
+    }
+
     try {
       const response = await fetch("http://127.0.0.1:5000/Form", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
       const responseBody = await response.json(); // Capture response JSON
@@ -61,24 +89,26 @@ const Form = () => {
       console.log("Response Body:", responseBody);
 
       if (response.ok) {
-        toast.success("Sign in successful!", {
+        toast.success("Data saved successfully!", {
           position: "top-center",
           transition: Slide,
         });
         reset();
         setSubmitted(true);
       } else {
-        const errorMessage = responseBody.message || "Failed to sign in.";
+        const errorMessage = responseBody.message || "Failed to save data.";
         throw new Error(errorMessage);
       }
     } catch (error) {
-      console.error("Error during sign in:", error);
-      toast.error(error.message || "Failed to sign in.");
+      console.error("Error during form submission:", error);
+      toast.error(error.message || "Failed to save data.");
     }
-  };
+};
+
+  
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-700 p-4">
+    <div className="flex items-center justify-center min-h-screen  border">
       <form
         onSubmit={handleSubmit(onSubmit)} action="/upload" method="POST" enctype="multipart/form-data"
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-6xl relative"
@@ -103,10 +133,11 @@ const Form = () => {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-0 text-sm">
                   IOPS Threshold for Scaling:
+                  <span className="text-red-500 ml-1">*</span>
                 </label>
                 <p className="text-xs mb-2 flex">
                   1. What is the IOPS threshold to trigger scaling?
-                  <span className="text-red-500 ml-1">*</span>
+                 
                   <span className="text-blue-500 underline flex items-center pl-2">
                     <a
                       href="https://drive.google.com/file/d/1NnMpam2IvrlOskUMs5GiP4kHA0NN-t72/view?usp=drivesdk"
@@ -195,9 +226,7 @@ const Form = () => {
                     <select
                       id="frequency"
                       value={formData.frequency}
-                      onChange={(e) =>
-                        handleChange("frequency", e.target.value)
-                      }
+                      {...register("frequency")}
                       className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500 mb-2"
                     >
                       <option value="">Select Frequency</option>
@@ -212,7 +241,7 @@ const Form = () => {
                     <select
                       id="time"
                       value={formData.time}
-                      onChange={(e) => handleChange("time", e.target.value)}
+                      {...register("time")}
                       className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500 mb-2"
                     >
                       <option value="">Select Time</option>
@@ -247,7 +276,7 @@ const Form = () => {
                   <span className="text-red-500 ml-1">*</span>
                 </label>
                 <p className="text-xs mb-2 flex">
-                  4. Specify the name of default VPC for the accelerated
+                  4. Specify the name of the default VPC for the accelerated
                   workload.
                   <span className="text-blue-500 underline flex items-center pl-2">
                     <a
@@ -422,7 +451,7 @@ const Form = () => {
                   PIOSA Server Login Details:
                 </label>
                 <p className="text-xs mb-2 flex">
-                  10. Provide the public IP address of PIOSA server and upload
+                  10. Provide the public IP address of the PIOSA server and upload
                   the .pem Key file.
                   <span className="text-blue-500 underline flex items-center pl-2">
                     <a
@@ -438,16 +467,18 @@ const Form = () => {
                 <input
                   type="text"
                   placeholder="Server Public IP Address"
-                  // {...register('PIOSA_Server_Login_Details')}
+                  {...register('PIOSA_Server_Login_Details')}
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="file"
                   name="pemkey"
                   placeholder=".PEM Key"
+                  {...register('dpic')}
                   className="shadow appearance-none border rounded w-full py-2 px-3 mt-4 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-0 text-sm">
                   Accelerated Server Name:
@@ -474,7 +505,8 @@ const Form = () => {
               </div>
             </div>
           </div>
-          <div className="w-1/2">
+
+          {/* <div className="w-1/2">
             <h2 className="text-center text-2xl font-bold mb-6">
               Storage Configuration
             </h2>
@@ -529,13 +561,122 @@ const Form = () => {
                   className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+
+
+              
+            </div>
+          </div> */}
+
+<div className="w-1/2">
+            <h2 className="text-center text-2xl font-bold mb-6">
+              Storage Configuration
+            </h2>
+            <div className="border p-4 rounded shadow">
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-0 text-sm">
+                  Count of EBS Volumes:
+                  <span className="text-red-500 ml-1">*</span>
+                </label>
+                <p className="text-xs mb-2 flex">
+                  12. How many EBS volumes are needed?
+                  <span className="text-blue-500 underline flex items-center pl-2">
+                    <a
+                      href="https://drive.google.com/file/d/1L9kdBYCS_CSUfIV-kGbAVjH35jYwjGXV/view?usp=sharing"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center"
+                    >
+                      Info
+                    </a>
+                  </span>
+                </p>
+                <input
+                  type="text"
+                  id="Count_of_EBS_Volumes"
+                  {...register("Count_of_EBS_Volumes")}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-0 text-sm">
+                  Total EBS Volume Size:
+                  <span className="text-red-500 ml-1">*</span>
+                </label>
+                <p className="text-xs mb-2 flex">
+                  13. Specify the total size of all EBS volumes.
+                  <span className="text-blue-500 underline flex items-center pl-2">
+                    <a
+                      href="https://drive.google.com/file/d/1NnMpam2IvrlOskUMs5GiP4kHA0NN-t72/view?usp=drivesdk"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center"
+                    >
+                      Info
+                    </a>
+                  </span>
+                </p>
+                <input
+                  type="text"
+                  id="Total_EBS_Volume_Size"
+                  {...register("Total_EBS_Volume_Size")}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-0 text-sm">
+                  VPC CIDR
+                  <span className="text-red-500 ml-1">*</span>
+                </label>
+                <p className="text-xs mb-2 flex">
+                  14. VPC CIDR Range
+                  <span className="text-blue-500 underline flex items-center pl-2">
+                    <a
+                      href="https://drive.google.com/file/d/1NnMpam2IvrlOskUMs5GiP4kHA0NN-t72/view?usp=drivesdk"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center"
+                    >
+                      Info
+                    </a>
+                  </span>
+                </p>
+                <input
+                  type="text"
+                  id="VPC_CIDR"
+                  {...register("VPC_CIDR")}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 border-black text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
             </div>
           </div>
+
+
+
+
+          
         </div>
+
+
+
+        
         <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-8"
-        >
+        type="submit"
+        onClick={downloadQuestionsExcel}
+        className="absolute bottom-8 right-8  bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-24 rounded focus:outline-none focus:shadow-outline"
+      >
+          Download Questionnaire in Excel
+        </button>
+        <button
+              type="button"
+            
+              className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-8 cursor-pointer"
+            >
+              Download Questionnaire PDF
+            </button>
+        <button
+        type="submit"
+        className="absolute bottom-8 right-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      >
           Submit
         </button>
       </form>
