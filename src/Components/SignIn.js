@@ -58,7 +58,7 @@ const SignIn = () => {
   useEffect(() => {
     if (submitted) {
       const timer = setTimeout(() => {
-        navigate("/form");
+        navigate("/Dashboard");
       }, 3000); // 3 seconds delay for the toast to be displayed
       return () => clearTimeout(timer); // Clear the timer on component unmount
     }

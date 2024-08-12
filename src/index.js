@@ -10,6 +10,12 @@ import Form from './Components/Form';
 import ThankYou from './Components/ThankYou';
 import OnBoarding from './Components/OnBoarding';
 import ContactUs from './Components/ContactUs';
+import Dashboard from './Components/Dashboard';
+import OptionInnerPage from './Components/OptionInnerPage';
+import Downloadable from './Components/Downloadable';
+import OptionInnerPage2 from './Components/OptionInnerPage2';
+import DynamicScript from './Components/DynamicScript';
+import Dashboard2 from './Components/Dashboard2';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -27,7 +33,13 @@ root.render(
 <Route exact path='/thank-you' element={<ThankYou/>} />
 <Route exact path='/Boarding' element={<OnBoarding/>} />
 <Route exact path='/ContactUs' element={<ContactUs/>} />
-
+<Route exact path='/Dashboard' element={<Dashboard/>} />
+<Route exact path='/OptionInnerPage/*' element={<OptionInnerPage/>} />
+<Route exact path='/Downloadable*' element={<Downloadable/>} />
+<Route exact path='/OptionInnerPage2/*' element={<OptionInnerPage2/>} />
+{/* <Route exact path='/OptionInnerPage3/*' element={<OptionInnerPage3/>} /> */}
+<Route exact path='/DynamicScript/*' element={<DynamicScript/>} />
+<Route exact path='Dashboard2' element={<Dashboard2/>} />
 
 
 </Routes>

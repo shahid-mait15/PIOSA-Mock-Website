@@ -41,6 +41,9 @@ function Home() {
       setShowChatBot(true);
     }
   }, [location.state]);
+
+
+  
   return (
     <>
       <div className=" h-screen bg-blue-600">
