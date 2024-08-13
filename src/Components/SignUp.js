@@ -35,7 +35,7 @@ const SignUp = () => {
       aws: data.aws || '' // Include aws only if it exists, otherwise set it to an empty string
     };
   
-    const response = await fetch("http://127.0.0.1:5000/SignUp", {
+    const response = await fetch("http://127.0.0.1:5010/SignUp", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)

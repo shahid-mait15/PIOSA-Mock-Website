@@ -12,10 +12,16 @@ function Dashboard2() {
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
-
+  
   const handleKnowMoreClick = (section) => {
-    setShowContent(section);
+    // Toggle the content when the same section is clicked again
+    if (showContent === section) {
+      setShowContent(null); // Close the section if it's already open
+    } else {
+      setShowContent(section); // Open the new section
+    }
   };
+
 
   const buttonClass = (section) =>
     `text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 ${
@@ -203,20 +209,9 @@ function Dashboard2() {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <Sidebar
-        openSidebarToggle={openSidebarToggle}
-        OpenSidebar={OpenSidebar}
-      />
-
-      <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          openSidebarToggle ? "ml-64" : "ml-0"
-        }`}
-      >
-        {/* Header */}
-        <Header OpenSidebar={OpenSidebar} />
-
+    <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+    <div className={`flex-1 flex flex-col transition-all duration-300 ${openSidebarToggle ? "ml-64" : "ml-16"}`}>
+      <Header />
         <div className="relative">
           {/* Full-width pink background */}
           <div className="bg-customPink py-8 px-4">
@@ -241,8 +236,21 @@ function Dashboard2() {
                     Create and deploy your own CloudFormation template to AWS.
                   </p>
                   <div className="mt-4 flex flex-col justify-center items-center space-y-2">
-                    <Link to="/OptionInnerPage" className="text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 rounded-full">
+                    <Link to="/OptionInnerPage2" className="text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 rounded-full">
                       Proceed
+                      <svg
+                  className="ml-2 h-5 w-5 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
                     </Link>
                     </div>
                   <div className="flex justify-center mt-auto">
@@ -250,7 +258,20 @@ function Dashboard2() {
                       onClick={() => handleKnowMoreClick("yourself")}
                       className={buttonClass("yourself")}
                     >
-                      Know More
+                      Read more
+                      <svg
+                  className="ml-2 h-5 w-5 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
                     </button>
                   </div>
                 </div>
@@ -268,17 +289,43 @@ function Dashboard2() {
                     Receive guidance and support for deploying your template.
                   </p>
                   <div className="mt-4 flex flex-col justify-center items-center space-y-2">
-                    <Link to="/OptionInnerPage" className="text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 rounded-full">
+                    <Link to="/OptionInnerPageAs" className="text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 rounded-full">
                       Proceed
+                      <svg
+                  className="ml-2 h-5 w-5 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
                     </Link>
                     </div>
                   <div className="flex justify-center mt-auto">
                     <button
                       onClick={() => handleKnowMoreClick("assisted")}
                       className={buttonClass("assisted")}
+                      
                     >
-                      Know More
-                    </button>
+                      Read more
+                      <svg
+                  className="ml-2 h-5 w-5 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>    </button>
                   </div>
                 </div>
               </div>
@@ -290,6 +337,7 @@ function Dashboard2() {
         </div>
       </div>
     </div>
+    
   );
 }
 
