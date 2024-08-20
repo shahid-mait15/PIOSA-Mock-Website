@@ -65,7 +65,7 @@ const Navigation = () => {
             </Link>
            
             <button
-              className="bg-purple-800 hover:bg-purple-600 text-white font-medium py-1.5 px-4 rounded"
+              className="bg-blue-600 hover:bg-blue-800 text-white font-medium py-1.5 px-4 rounded"
              
             ><Link to="/SignUp"> Register</Link>
              
