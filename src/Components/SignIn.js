@@ -58,11 +58,13 @@ const SignIn = () => {
   useEffect(() => {
     if (submitted) {
       const timer = setTimeout(() => {
-        navigate("/Dashboard");
+        navigate("/Dashboard2");
       }, 3000); // 3 seconds delay for the toast to be displayed
       return () => clearTimeout(timer); // Clear the timer on component unmount
     }
   }, [submitted, navigate]);
+
+  
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"

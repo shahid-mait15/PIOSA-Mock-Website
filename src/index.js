@@ -16,6 +16,8 @@ import Downloadable from './Components/Downloadable';
 import OptionInnerPage2 from './Components/OptionInnerPage2';
 import DynamicScript from './Components/DynamicScript';
 import Dashboard2 from './Components/Dashboard2';
+import OptionInnerPageAs from './Components/OptionInnerPageAs';
+import UserDashboard from './Components/UserDashboard';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -41,6 +43,8 @@ root.render(
 <Route exact path='/DynamicScript/*' element={<DynamicScript/>} />
 <Route exact path='Dashboard2' element={<Dashboard2/>} />
 
+<Route exact path='/OptionInnerPageAs/*' element={<OptionInnerPageAs/>} />
+<Route exact path='/UserDashboard' element={<UserDashboard/>} />
 
 </Routes>
 

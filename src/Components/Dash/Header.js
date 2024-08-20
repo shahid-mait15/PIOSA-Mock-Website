@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BsFillBellFill, BsFillEnvelopeFill, BsPersonCircle } from 'react-icons/bs';
 
-function Header({ OpenSidebar }) {
+function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -24,18 +24,8 @@ function Header({ OpenSidebar }) {
 
   return (
     <header className='flex items-center justify-between p-2 bg-white shadow-md relative'>
-      {/* Sidebar Toggle Button */}
-      <div className='cursor-pointer'>
-        <button
-          className='text-xl bg-gray-200 p-2 rounded-md focus:outline-none hover:bg-gray-300'
-          onClick={OpenSidebar}
-        >
-          ☰
-        </button>
-      </div>
-
       {/* Right Icons */}
-      <div className='flex items-center space-x-4 gap-6 relative'>
+      <div className='ml-auto flex items-center space-x-4 gap-6 relative'>
         <BsFillBellFill className='text-3xl cursor-pointer' />
         <BsFillEnvelopeFill className='text-3xl cursor-pointer' />
         
@@ -52,6 +42,7 @@ function Header({ OpenSidebar }) {
               </div>
               <ul className="py-2">
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Edit Profile</li>
+                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600">Logout</li> {/* Logout Button */}
               </ul>
             </div>
           )}

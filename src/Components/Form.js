@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast, ToastContainer, Slide } from "react-toastify";
-import downloadQuestionsExcel from '../assets/PIOSA-Questions.xlsx'
+import downloadQuestionsExcel from '../assets/PIOSA-Questions 2.xlsx'
 
 const Form = () => {
   const [submitted, setSubmitted] = useState(false);
   const [showDynamicFields, setShowDynamicFields] = useState(false);
+  const navigate = useNavigate(); // Corrected this line
   const [formData, setFormData] = useState({
     frequency: "",
     time: "",
@@ -21,8 +22,7 @@ const Form = () => {
     }));
   };
   const schema = yup.object().shape({
-    // email: yup.string().email("Invalid email format").required("Email is required"),
-    // password: yup.string().required("Password is required"),
+    // Add your validation schema here
   });
 
   const generateTimeOptions = () => {
@@ -40,7 +40,14 @@ const Form = () => {
     return times;
   };
 
-
+  useEffect(() => {
+    if (submitted) {
+      const timer = setTimeout(() => {
+        navigate("/thank-you"); // Correctly invoke navigate
+      }, 3000); // 3 seconds delay for the toast to be displayed
+      return () => clearTimeout(timer); // Clear the timer on component unmount
+    }
+  }, [submitted, navigate]);
 
   const {
     register,
@@ -70,11 +77,8 @@ const Form = () => {
     formData.append("Total_EBS_Volume_Size", data.Total_EBS_Volume_Size);
     formData.append("VPC_CIDR", data.VPC_CIDR);
 
-   
-
-    // If there's a file, append it to the FormData
     if (data.dpic && data.dpic[0]) {
-        formData.append("dpic", data.dpic[0]);
+      formData.append("dpic", data.dpic[0]);
     }
 
     try {
@@ -83,7 +87,7 @@ const Form = () => {
         body: formData,
       });
 
-      const responseBody = await response.json(); // Capture response JSON
+      const responseBody = await response.json();
 
       console.log("Response Status:", response.status);
       console.log("Response Body:", responseBody);
@@ -103,12 +107,12 @@ const Form = () => {
       console.error("Error during form submission:", error);
       toast.error(error.message || "Failed to save data.");
     }
-};
-
+  };
   
 
   return (
     <div className="flex items-center justify-center min-h-screen  border">
+       <ToastContainer />
       <form
         onSubmit={handleSubmit(onSubmit)} action="/upload" method="POST" enctype="multipart/form-data"
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-6xl relative"

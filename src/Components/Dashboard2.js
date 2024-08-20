@@ -14,8 +14,14 @@ function Dashboard2() {
   };
 
   const handleKnowMoreClick = (section) => {
-    setShowContent(section);
+    // Toggle the content when the same section is clicked again
+    if (showContent === section) {
+      setShowContent(null); // Close the section if it's already open
+    } else {
+      setShowContent(section); // Open the new section
+    }
   };
+
 
   const buttonClass = (section) =>
     `text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 ${
@@ -30,7 +36,7 @@ function Dashboard2() {
         return (
           <div className="w-full bg-gradient-to-r from-pink-100 via-pink-50 to-blue-100 border rounded-lg shadow-lg p-6 mt-8">
             <h2 className="text-2xl font-bold text-green-800 py-3 border-b border-green-300 mb-4">
-              Instruction Manual​
+            Do It Yourself
             </h2>
             <div className="space-y-4">
               <div>
@@ -115,11 +121,19 @@ function Dashboard2() {
         return (
           <div className="w-full bg-gradient-to-r from-pink-100 via-pink-50 to-blue-100 border rounded-lg shadow-lg p-6 mt-8 ">
             <h2 className="text-2xl font-bold text-green-800 py-3 border-b border-green-300 mb-4">
-              Instruction Manual​
+            Assisted Deployment
             </h2>
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-blue-900 flex items-center">
+                <h1>
+                 <p className=""> To ensure a seamless and efficient deployment of our product, we offer an assisted deployment service.</p><br/>
+ 
+ <p>To get started, please fill out the form by clicking on proceed button above and provide us the necessary details. This will help </p>us tailor the deployment process to your specific needs and ensure everything is set up correctly.<br/><br/>
+  
+<p> Once you’ve completed the form, our team will reach out to you to schedule a convenient time for the deployment.</p>
+ If you have any questions or need further assistance, feel free to reach out to us at info@gxinetworks.com.
+</h1>
+                {/* <h3 className="text-lg font-semibold text-blue-900 flex items-center">
                   <svg
                     className="w-6 h-6 mr-2 text-blue-500"
                     fill="none"
@@ -134,12 +148,14 @@ function Dashboard2() {
                     />
                   </svg>
                   Step 1
-                </h3>
-                <p className="pl-8 text-gray-700">
+                </h3> */}
+                {/* <p className="pl-8 text-gray-700">
                   Download the CloudFormation template (CFT) from our website.
-                </p>
+                </p> */}
+
+
               </div>
-              <div>
+              {/* <div>
                 <h3 className="text-lg font-semibold text-blue-900 flex items-center">
                   <svg
                     className="w-6 h-6 mr-2 text-blue-500"
@@ -169,9 +185,9 @@ function Dashboard2() {
                   <li>Upload the CloudFormation Template.</li>
                   <li>Verify the upload is complete.</li>
                 </ul>
-              </div>
+              </div> */}
               <div>
-                <h3 className="text-lg font-semibold text-blue-900 flex items-center">
+                {/* <h3 className="text-lg font-semibold text-blue-900 flex items-center">
                   <svg
                     className="w-6 h-6 mr-2 text-blue-500"
                     fill="none"
@@ -186,12 +202,12 @@ function Dashboard2() {
                     />
                   </svg>
                   Step 3
-                </h3>
-                <p className="pl-8 text-gray-700">
+                </h3> */}
+                {/* <p className="pl-8 text-gray-700">
                   Retrieve the CloudFormation template from your S3 bucket and
                   deploy it to construct the CFT-based architecture. Note that
                   customers need to create their own subnets.
-                </p>
+                </p> */}
               </div>
             </div>
           </div>
@@ -203,20 +219,9 @@ function Dashboard2() {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <Sidebar
-        openSidebarToggle={openSidebarToggle}
-        OpenSidebar={OpenSidebar}
-      />
-
-      <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          openSidebarToggle ? "ml-64" : "ml-0"
-        }`}
-      >
-        {/* Header */}
-        <Header OpenSidebar={OpenSidebar} />
-
+    <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+    <div className={`flex-1 flex flex-col transition-all duration-300 ${openSidebarToggle ? "ml-64" : "ml-16"}`}>
+      <Header />
         <div className="relative">
           {/* Full-width pink background */}
           <div className="bg-customPink py-8 px-4">
@@ -235,14 +240,27 @@ function Dashboard2() {
                     className="w-full h-40 object-cover rounded-t-3xl mb-4"
                   />
                   <h2 className="text-2xl font-bold mb-4 text-center">
-                    Do It, Yourself
+                    Do It Yourself
                   </h2>
                   <p className="text-gray-600 text-center">
                     Create and deploy your own CloudFormation template to AWS.
                   </p>
                   <div className="mt-4 flex flex-col justify-center items-center space-y-2">
-                    <Link to="/OptionInnerPage" className="text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 rounded-full">
+                    <Link to="/OptionInnerPage2" className="text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 rounded-full">
                       Proceed
+                      <svg
+                  className="ml-2 h-5 w-5 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
                     </Link>
                     </div>
                   <div className="flex justify-center mt-auto">
@@ -250,7 +268,20 @@ function Dashboard2() {
                       onClick={() => handleKnowMoreClick("yourself")}
                       className={buttonClass("yourself")}
                     >
-                      Know More
+                      Read more
+                      <svg
+                  className="ml-2 h-5 w-5 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
                     </button>
                   </div>
                 </div>
@@ -268,17 +299,43 @@ function Dashboard2() {
                     Receive guidance and support for deploying your template.
                   </p>
                   <div className="mt-4 flex flex-col justify-center items-center space-y-2">
-                    <Link to="/OptionInnerPage" className="text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 rounded-full">
+                    <Link to="/OptionInnerPageAs" className="text-blue-500 hover:underline font-semibold flex items-center px-4 py-2 transition-all duration-300 rounded-full">
                       Proceed
+                      <svg
+                  className="ml-2 h-5 w-5 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
                     </Link>
                     </div>
                   <div className="flex justify-center mt-auto">
                     <button
                       onClick={() => handleKnowMoreClick("assisted")}
                       className={buttonClass("assisted")}
+                      
                     >
-                      Know More
-                    </button>
+                      Read more
+                      <svg
+                  className="ml-2 h-5 w-5 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>    </button>
                   </div>
                 </div>
               </div>

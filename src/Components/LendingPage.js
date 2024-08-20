@@ -63,16 +63,16 @@ const Navigation = () => {
             >
               Contact Us
             </Link>
-            <a
+            {/* <a
               href="#"
               className={` mt-1 mx-2 font-medium ${selected === 'About Us' ? 'underline-thick' : 'hover-underline-thick'}`}
               onClick={() => handleClick('About Us')}
             >
               About Us
-            </a>
+            </a> */}
 
             <button
-              className="bg-purple-800 hover:bg-purple-600 text-white font-medium py-1.5 px-4 rounded"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-1.5 px-4 rounded"
              
             ><Link to="/SignUp"> Register</Link>
              
