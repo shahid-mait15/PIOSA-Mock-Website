@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("details"));
 
-mongoose.connect('mongodb://127.0.0.1:27017/Prolific', {})
+mongoose.connect('mongodb+srv://mongo:mongomongo@cluster0.a9wh0.mongodb.net/test1', {})
   .then(() => console.log('Database is connected'))
   .catch((err) => console.log('Database is not connected', err));
 
